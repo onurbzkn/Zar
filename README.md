@@ -1,1 +1,311 @@
-# Zar
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Liquid Dice Pro - Hey Ceminay</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5; 
+            --dice-color: #00ff88;
+            --glass: rgba(255, 255, 255, 0.45);
+            --ios-border: rgba(255, 255, 255, 0.3);
+            --sel-dice-glow: #00ff88;
+            --sel-bg-glow: #aaa;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-color);
+            font-family: -apple-system, system-ui, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-container {
+            display: flex;
+            width: 200%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.6, 0.01, 0.1, 1);
+        }
+
+        .section {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* --- 3D ZAR --- */
+        .scene {
+            width: 100px;
+            height: 100px;
+            perspective: 1000px;
+            margin: 20px;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+        }
+
+        .cube__face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: var(--dice-color);
+            border: 1px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            font-weight: bold;
+            color: white;
+            border-radius: 20px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 0 8px var(--dice-color);
+        }
+
+        .face-1 { transform: rotateY(0deg) translateZ(50px); }
+        .face-2 { transform: rotateY(180deg) translateZ(50px); }
+        .face-3 { transform: rotateY(90deg) translateZ(50px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(50px); }
+        .face-5 { transform: rotateX(90deg) translateZ(50px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(50px); }
+
+        /* --- AYARLAR PANELI --- */
+        .settings-card {
+            background: var(--glass);
+            backdrop-filter: blur(30px) saturate(190%);
+            -webkit-backdrop-filter: blur(30px) saturate(190%);
+            border: 1px solid var(--ios-border);
+            border-radius: 30px;
+            width: 100%;
+            max-width: 380px;
+            padding: 20px;
+        }
+
+        .settings-group {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .setting-row {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 0.5px solid rgba(0,0,0,0.05);
+        }
+
+        /* --- RENK SEÇENEKLERİ --- */
+        .color-grid {
+            display: flex;
+            gap: 12px;
+            padding: 5px 0;
+        }
+
+        .color-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2.5px solid white;
+            transition: 0.3s;
+        }
+
+        /* Yanma Efekti (Dice) */
+        .dice-dot.selected {
+            transform: scale(1.2);
+            box-shadow: 0 0 12px var(--sel-dice-glow);
+            animation: glow-dice 1.5s infinite alternate;
+        }
+
+        /* Yanma Efekti (BG) */
+        .bg-dot.selected {
+            transform: scale(1.2);
+            box-shadow: 0 0 12px var(--sel-bg-glow);
+            animation: glow-bg 1.5s infinite alternate;
+        }
+
+        @keyframes glow-dice { from { box-shadow: 0 0 2px var(--sel-dice-glow); } to { box-shadow: 0 0 15px var(--sel-dice-glow); } }
+        @keyframes glow-bg { from { box-shadow: 0 0 2px var(--sel-bg-glow); } to { box-shadow: 0 0 15px var(--sel-bg-glow); } }
+
+        /* --- ALT BAR --- */
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 240px;
+            height: 60px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--ios-border);
+            z-index: 1000;
+            padding: 5px;
+        }
+
+        .nav-indicator {
+            position: absolute;
+            height: 50px;
+            width: 110px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 25px;
+            z-index: 1001;
+            transition: transform 0.4s cubic-bezier(0.6, 0.01, 0.1, 1);
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            color: rgba(0,0,0,0.4);
+            cursor: pointer;
+            z-index: 1002;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active { color: #000; }
+
+        input[type="range"] { accent-color: #007aff; }
+    </style>
+</head>
+<body onclick="handleGlobalClick(event)">
+
+    <div class="main-container" id="slider">
+        <div class="section" id="dice-view">
+            <div id="dice-wrapper" style="display:flex; flex-wrap:wrap; justify-content:center;">
+                <div class="scene"><div class="cube" id="cube1">
+                    <div class="cube__face face-1">1</div><div class="cube__face face-2">6</div>
+                    <div class="cube__face face-3">3</div><div class="cube__face face-4">4</div>
+                    <div class="cube__face face-5">5</div><div class="cube__face face-6">2</div>
+                </div></div>
+            </div>
+        </div>
+
+        <div class="section" id="settings-view">
+            <div class="settings-card" onclick="event.stopPropagation()">
+                <h3 style="margin: 0 0 15px 5px;">Ayarlar</h3>
+                
+                <div class="settings-group">
+                    <div class="setting-row">
+                        <span>Zar Sayısı</span>
+                        <select id="count" onchange="initDices()" style="background:none; border:none; font-weight:600;">
+                            <option value="1">1 Zar</option>
+                            <option value="2">2 Zar</option>
+                            <option value="3">3 Zar</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="setting-row"><span>Ses Seviyesi</span><input type="range" style="width: 100px;"></div>
+                    <div class="setting-row"><span>Titreşim</span><input type="checkbox" id="vibrate-toggle" checked></div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+                        <span>Zar Rengi (Neon)</span>
+                        <div class="color-grid" id="diceColors">
+                            <div class="color-dot dice-dot selected" style="background:#00ff88" onclick="setDiceCol('#00ff88', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#00d9ff" onclick="setDiceCol('#00d9ff', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#ff0077" onclick="setDiceCol('#ff0077', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#ccff00" onclick="setDiceCol('#ccff00', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#ff9900" onclick="setDiceCol('#ff9900', this)"></div>
+                        </div>
+                    </div>
+                    <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+                        <span>Arka Plan (Pastel)</span>
+                        <div class="color-grid" id="bgColors">
+                            <div class="color-dot bg-dot selected" style="background:#f0f2f5" onclick="setBgCol('#f0f2f5', this, '#aaa')"></div>
+                            <div class="color-dot bg-dot" style="background:#e3f2fd" onclick="setBgCol('#e3f2fd', this, '#90caf9')"></div>
+                            <div class="color-dot bg-dot" style="background:#f1f8e9" onclick="setBgCol('#f1f8e9', this, '#a5d6a7')"></div>
+                            <div class="color-dot bg-dot" style="background:#fff3e0" onclick="setBgCol('#fff3e0', this, '#ffcc80')"></div>
+                            <div class="color-dot bg-dot" style="background:#fce4ec" onclick="setBgCol('#fce4ec', this, '#f48fb1')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 10px;">
+                    <a href="#" style="font-size: 12px; color: #007aff; text-decoration: none; opacity: 0.7;">Gizlilik Politikası</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-container" onclick="event.stopPropagation()">
+        <div class="nav-indicator" id="indicator"></div>
+        <div class="nav-item active" id="n1" onclick="go(0, 'n1')">ZAR</div>
+        <div class="nav-item" id="n2" onclick="go(-50, 'n2')">AYARLAR</div>
+    </div>
+
+    <script>
+        let currentSection = 'dice';
+
+        function go(pos, id) {
+            document.getElementById('slider').style.transform = `translateX(${pos}%)`;
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('indicator').style.transform = (id === 'n1') ? 'translateX(0px)' : 'translateX(120px)';
+            currentSection = (id === 'n1') ? 'dice' : 'settings';
+        }
+
+        function handleGlobalClick(e) { if(currentSection === 'dice') rollDice(); }
+
+        function rollDice() {
+            document.querySelectorAll('.cube').forEach(cube => {
+                const face = Math.floor(Math.random() * 6) + 1;
+                let x = 0, y = 0;
+                switch(face) {
+                    case 1: x = 0; y = 0; break;
+                    case 2: x = 0; y = 180; break;
+                    case 3: x = 0; y = -90; break;
+                    case 4: x = 0; y = 90; break;
+                    case 5: x = -90; y = 0; break;
+                    case 6: x = 90; y = 0; break;
+                }
+                const extra = (Math.floor(Math.random() * 2) + 3) * 360;
+                cube.style.transform = `rotateX(${x + extra}deg) rotateY(${y + extra}deg)`;
+                if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(40);
+            });
+        }
+
+        function initDices() {
+            const count = document.getElementById('count').value;
+            const wrap = document.getElementById('dice-wrapper');
+            wrap.innerHTML = '';
+            for(let i=0; i<count; i++) {
+                wrap.innerHTML += `<div class="scene"><div class="cube"><div class="cube__face face-1">1</div><div class="cube__face face-2">6</div><div class="cube__face face-3">3</div><div class="cube__face face-4">4</div><div class="cube__face face-5">5</div><div class="cube__face face-6">2</div></div></div>`;
+            }
+        }
+
+        function setDiceCol(color, el) {
+            document.documentElement.style.setProperty('--dice-color', color);
+            document.documentElement.style.setProperty('--sel-dice-glow', color);
+            document.querySelectorAll('#diceColors .dice-dot').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function setBgCol(color, el, glowColor) {
+            document.documentElement.style.setProperty('--bg-color', color);
+            document.documentElement.style.setProperty('--sel-bg-glow', glowColor);
+            document.querySelectorAll('#bgColors .bg-dot').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+    </script>
+</body>
+</html>
