@@ -1,10 +1,12 @@
 {
-  "name": "DicePro",
+  "name": "3D Liquid Dice Pro",
   "short_name": "DicePro",
-  "description": "3D Liquid Glass Dice Rolling Application",
+  "description": "Premium 3D Liquid Glass Dice Application for Mobile Devices",
   "start_url": "/Zar/",
+  "scope": "/Zar/",
   "display": "standalone",
-  "background_color": "#f0f2f5",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
   "theme_color": "#00ff88",
   "icons": [
     {
