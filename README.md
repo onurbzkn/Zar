@@ -50,7 +50,7 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
-            margin-top: +20%;
+            margin-top: +30%;
         }
 
         .scene {
