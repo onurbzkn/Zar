@@ -96,7 +96,7 @@
         .settings-group {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             overflow: hidden;
         }
 
@@ -106,37 +106,14 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 0.5px solid rgba(0,0,0,0.05);
+            font-size: 15px;
         }
 
-        /* --- RENK SEÇENEKLERİ --- */
-        .color-grid {
-            display: flex;
-            gap: 12px;
-            padding: 5px 0;
-        }
+        .color-grid { display: flex; gap: 12px; padding: 5px 0; }
+        .color-dot { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid white; transition: 0.3s; cursor: pointer; }
 
-        .color-dot {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2.5px solid white;
-            transition: 0.3s;
-        }
-
-        /* Yanma Efekti (Dice) */
-        .dice-dot.selected {
-            transform: scale(1.2);
-            box-shadow: 0 0 12px var(--sel-dice-glow);
-            animation: glow-dice 1.5s infinite alternate;
-        }
-
-        /* Yanma Efekti (BG) */
-        .bg-dot.selected {
-            transform: scale(1.2);
-            box-shadow: 0 0 12px var(--sel-bg-glow);
-            animation: glow-bg 1.5s infinite alternate;
-        }
+        .dice-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-dice-glow); animation: glow-dice 1.5s infinite alternate; }
+        .bg-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-bg-glow); animation: glow-bg 1.5s infinite alternate; }
 
         @keyframes glow-dice { from { box-shadow: 0 0 2px var(--sel-dice-glow); } to { box-shadow: 0 0 15px var(--sel-dice-glow); } }
         @keyframes glow-bg { from { box-shadow: 0 0 2px var(--sel-bg-glow); } to { box-shadow: 0 0 15px var(--sel-bg-glow); } }
@@ -169,27 +146,19 @@
             transition: transform 0.4s cubic-bezier(0.6, 0.01, 0.1, 1);
         }
 
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            font-weight: 600;
-            color: rgba(0,0,0,0.4);
-            cursor: pointer;
-            z-index: 1002;
-            transition: color 0.3s ease;
-        }
-
+        .nav-item { flex: 1; text-align: center; font-weight: 600; color: rgba(0,0,0,0.4); cursor: pointer; z-index: 1002; transition: 0.3s; }
         .nav-item.active { color: #000; }
 
+        select { background: none; border: none; font-weight: 600; font-family: inherit; font-size: 14px; cursor: pointer; }
         input[type="range"] { accent-color: #007aff; }
     </style>
 </head>
 <body onclick="handleGlobalClick(event)">
 
     <div class="main-container" id="slider">
-        <div class="section" id="dice-view">
+        <div class="section">
             <div id="dice-wrapper" style="display:flex; flex-wrap:wrap; justify-content:center;">
-                <div class="scene"><div class="cube" id="cube1">
+                <div class="scene"><div class="cube">
                     <div class="cube__face face-1">1</div><div class="cube__face face-2">6</div>
                     <div class="cube__face face-3">3</div><div class="cube__face face-4">4</div>
                     <div class="cube__face face-5">5</div><div class="cube__face face-6">2</div>
@@ -197,29 +166,37 @@
             </div>
         </div>
 
-        <div class="section" id="settings-view">
+        <div class="section">
             <div class="settings-card" onclick="event.stopPropagation()">
-                <h3 style="margin: 0 0 15px 5px;">Ayarlar</h3>
+                <h3 id="txt-settings" style="margin: 0 0 15px 5px;">Ayarlar</h3>
                 
                 <div class="settings-group">
                     <div class="setting-row">
-                        <span>Zar Sayısı</span>
-                        <select id="count" onchange="initDices()" style="background:none; border:none; font-weight:600;">
-                            <option value="1">1 Zar</option>
-                            <option value="2">2 Zar</option>
-                            <option value="3">3 Zar</option>
+                        <span id="txt-dice-count">Zar Sayısı</span>
+                        <select id="count" onchange="initDices()">
+                            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <span id="txt-lang">Dil</span>
+                        <select id="lang-select" onchange="changeLang()">
+                            <option value="tr">Türkçe</option>
+                            <option value="en">English</option>
+                            <option value="de">Deutsch</option>
+                            <option value="fr">Français</option>
+                            <option value="es">Español</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="settings-group">
-                    <div class="setting-row"><span>Ses Seviyesi</span><input type="range" style="width: 100px;"></div>
-                    <div class="setting-row"><span>Titreşim</span><input type="checkbox" id="vibrate-toggle" checked></div>
+                    <div class="setting-row"><span id="txt-volume">Ses</span><input type="range" style="width: 80px;"></div>
+                    <div class="setting-row"><span id="txt-vibration">Titreşim</span><input type="checkbox" id="vibrate-toggle" checked></div>
                 </div>
 
                 <div class="settings-group">
                     <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
-                        <span>Zar Rengi (Neon)</span>
+                        <span id="txt-dice-color">Zar Rengi (Neon)</span>
                         <div class="color-grid" id="diceColors">
                             <div class="color-dot dice-dot selected" style="background:#00ff88" onclick="setDiceCol('#00ff88', this)"></div>
                             <div class="color-dot dice-dot" style="background:#00d9ff" onclick="setDiceCol('#00d9ff', this)"></div>
@@ -229,7 +206,7 @@
                         </div>
                     </div>
                     <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
-                        <span>Arka Plan (Pastel)</span>
+                        <span id="txt-bg-color">Arka Plan (Pastel)</span>
                         <div class="color-grid" id="bgColors">
                             <div class="color-dot bg-dot selected" style="background:#f0f2f5" onclick="setBgCol('#f0f2f5', this, '#aaa')"></div>
                             <div class="color-dot bg-dot" style="background:#e3f2fd" onclick="setBgCol('#e3f2fd', this, '#90caf9')"></div>
@@ -240,9 +217,7 @@
                     </div>
                 </div>
 
-                <div style="text-align: center; margin-top: 10px;">
-                    <a href="#" style="font-size: 12px; color: #007aff; text-decoration: none; opacity: 0.7;">Gizlilik Politikası</a>
-                </div>
+                <div style="text-align: center;"><small id="txt-privacy" style="opacity:0.5; font-size: 11px;">Gizlilik Politikası</small></div>
             </div>
         </div>
     </div>
@@ -255,6 +230,28 @@
 
     <script>
         let currentSection = 'dice';
+        const langData = {
+            tr: { settings: "Ayarlar", diceCount: "Zar Sayısı", lang: "Dil", volume: "Ses", vibration: "Titreşim", diceColor: "Zar Rengi (Neon)", bgColor: "Arka Plan (Pastel)", privacy: "Gizlilik Politikası", navDice: "ZAR", navSets: "AYARLAR" },
+            en: { settings: "Settings", diceCount: "Dice Count", lang: "Language", volume: "Volume", vibration: "Vibration", diceColor: "Dice Color (Neon)", bgColor: "Background (Pastel)", privacy: "Privacy Policy", navDice: "DICE", navSets: "SETTINGS" },
+            de: { settings: "Einstellungen", diceCount: "Würfelanzahl", lang: "Sprache", volume: "Lautstärke", vibration: "Vibration", diceColor: "Würfelfarbe", bgColor: "Hintergrund", privacy: "Datenschutz", navDice: "WÜRFEL", navSets: "SETUP" },
+            fr: { settings: "Paramètres", diceCount: "Nombre de dés", lang: "Langue", volume: "Volume", vibration: "Vibration", diceColor: "Couleur dés", bgColor: "Arrière-plan", privacy: "Confidentialité", navDice: "DÉS", navSets: "CONFIG" },
+            es: { settings: "Ajustes", diceCount: "Número de dados", lang: "Idioma", volume: "Volumen", vibration: "Vibración", diceColor: "Color de dados", bgColor: "Fondo", privacy: "Privacidad", navDice: "DADOS", navSets: "AJUSTES" }
+        };
+
+        function changeLang() {
+            const l = document.getElementById('lang-select').value;
+            const d = langData[l];
+            document.getElementById('txt-settings').innerText = d.settings;
+            document.getElementById('txt-dice-count').innerText = d.diceCount;
+            document.getElementById('txt-lang').innerText = d.lang;
+            document.getElementById('txt-volume').innerText = d.volume;
+            document.getElementById('txt-vibration').innerText = d.vibration;
+            document.getElementById('txt-dice-color').innerText = d.diceColor;
+            document.getElementById('txt-bg-color').innerText = d.bgColor;
+            document.getElementById('txt-privacy').innerText = d.privacy;
+            document.getElementById('n1').innerText = d.navDice;
+            document.getElementById('n2').innerText = d.navSets;
+        }
 
         function go(pos, id) {
             document.getElementById('slider').style.transform = `translateX(${pos}%)`;
@@ -278,8 +275,7 @@
                     case 5: x = -90; y = 0; break;
                     case 6: x = 90; y = 0; break;
                 }
-                const extra = (Math.floor(Math.random() * 2) + 3) * 360;
-                cube.style.transform = `rotateX(${x + extra}deg) rotateY(${y + extra}deg)`;
+                cube.style.transform = `rotateX(${x + 1080}deg) rotateY(${y + 1080}deg)`;
                 if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(40);
             });
         }
@@ -306,6 +302,7 @@
             document.querySelectorAll('#bgColors .bg-dot').forEach(d => d.classList.remove('selected'));
             el.classList.add('selected');
         }
+        initDices();
     </script>
 </body>
 </html>
