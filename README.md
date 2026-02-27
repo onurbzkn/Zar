@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3D Liquid Dice Pro - Hey Ceminay</title>
+    <title>Pro Liquid Glass Dice - Hey Ceminay</title>
     <style>
         :root {
             --bg-color: #f0f2f5; 
@@ -22,7 +22,7 @@
             font-family: -apple-system, system-ui, sans-serif;
             height: 100vh;
             overflow: hidden;
-            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background 0.8s ease;
         }
 
         .main-container {
@@ -38,16 +38,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: center; /* Zarları tam ortaya çeken ayar */
             padding: 20px;
         }
 
-        /* --- 3D ZAR --- */
+        /* --- 3D ZAR MEKANİZMASI --- */
         .scene {
             width: 100px;
             height: 100px;
             perspective: 1000px;
-            margin: 20px;
+            margin: 15px;
         }
 
         .cube {
@@ -55,7 +55,8 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+            transform: rotateX(-20deg) rotateY(20deg);
+            transition: transform 1.5s cubic-bezier(0.15, 0.85, 0.35, 1.2);
         }
 
         .cube__face {
@@ -81,7 +82,7 @@
         .face-5 { transform: rotateX(90deg) translateZ(50px); }
         .face-6 { transform: rotateX(-90deg) translateZ(50px); }
 
-        /* --- AYARLAR PANELI --- */
+        /* --- iOS AYARLAR KARTI --- */
         .settings-card {
             background: var(--glass);
             backdrop-filter: blur(30px) saturate(190%);
@@ -91,34 +92,36 @@
             width: 100%;
             max-width: 380px;
             padding: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
         }
 
         .settings-group {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             border-radius: 12px;
             margin-bottom: 12px;
             overflow: hidden;
         }
 
         .setting-row {
-            padding: 12px 16px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 0.5px solid rgba(0,0,0,0.05);
-            font-size: 15px;
+            font-size: 14px;
         }
 
-        .color-grid { display: flex; gap: 12px; padding: 5px 0; }
-        .color-dot { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid white; transition: 0.3s; cursor: pointer; }
-
+        /* --- RENKLER VE GLOW --- */
+        .color-grid { display: flex; gap: 10px; padding: 5px 0; }
+        .color-dot { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid white; cursor: pointer; transition: 0.3s; }
+        
         .dice-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-dice-glow); animation: glow-dice 1.5s infinite alternate; }
         .bg-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-bg-glow); animation: glow-bg 1.5s infinite alternate; }
 
         @keyframes glow-dice { from { box-shadow: 0 0 2px var(--sel-dice-glow); } to { box-shadow: 0 0 15px var(--sel-dice-glow); } }
         @keyframes glow-bg { from { box-shadow: 0 0 2px var(--sel-bg-glow); } to { box-shadow: 0 0 15px var(--sel-bg-glow); } }
 
-        /* --- ALT BAR --- */
+        /* --- ALT NAV --- */
         .nav-container {
             position: fixed;
             bottom: 30px;
@@ -130,27 +133,24 @@
             backdrop-filter: blur(25px);
             border-radius: 30px;
             display: flex;
-            align-items: center;
             border: 1px solid var(--ios-border);
-            z-index: 1000;
             padding: 5px;
+            z-index: 1000;
         }
 
         .nav-indicator {
             position: absolute;
             height: 50px;
             width: 110px;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 25px;
-            z-index: 1001;
             transition: transform 0.4s cubic-bezier(0.6, 0.01, 0.1, 1);
         }
 
-        .nav-item { flex: 1; text-align: center; font-weight: 600; color: rgba(0,0,0,0.4); cursor: pointer; z-index: 1002; transition: 0.3s; }
+        .nav-item { flex: 1; text-align: center; font-weight: 700; color: rgba(0,0,0,0.3); cursor: pointer; z-index: 1002; line-height: 50px; }
         .nav-item.active { color: #000; }
 
-        select { background: none; border: none; font-weight: 600; font-family: inherit; font-size: 14px; cursor: pointer; }
-        input[type="range"] { accent-color: #007aff; }
+        select { background: none; border: none; font-weight: 600; font-family: inherit; }
     </style>
 </head>
 <body onclick="handleGlobalClick(event)">
@@ -158,12 +158,7 @@
     <div class="main-container" id="slider">
         <div class="section">
             <div id="dice-wrapper" style="display:flex; flex-wrap:wrap; justify-content:center;">
-                <div class="scene"><div class="cube">
-                    <div class="cube__face face-1">1</div><div class="cube__face face-2">6</div>
-                    <div class="cube__face face-3">3</div><div class="cube__face face-4">4</div>
-                    <div class="cube__face face-5">5</div><div class="cube__face face-6">2</div>
-                </div></div>
-            </div>
+                </div>
         </div>
 
         <div class="section">
@@ -174,23 +169,19 @@
                     <div class="setting-row">
                         <span id="txt-dice-count">Zar Sayısı</span>
                         <select id="count" onchange="initDices()">
-                            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                            <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option>
                         </select>
                     </div>
                     <div class="setting-row">
                         <span id="txt-lang">Dil</span>
                         <select id="lang-select" onchange="changeLang()">
-                            <option value="tr">Türkçe</option>
-                            <option value="en">English</option>
-                            <option value="de">Deutsch</option>
-                            <option value="fr">Français</option>
-                            <option value="es">Español</option>
+                            <option value="tr">Türkçe</option><option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="settings-group">
-                    <div class="setting-row"><span id="txt-volume">Ses</span><input type="range" style="width: 80px;"></div>
+                    <div class="setting-row"><span id="txt-volume">Ses Seviyesi</span><input type="range" style="width: 80px;"></div>
                     <div class="setting-row"><span id="txt-vibration">Titreşim</span><input type="checkbox" id="vibrate-toggle" checked></div>
                 </div>
 
@@ -217,7 +208,7 @@
                     </div>
                 </div>
 
-                <div style="text-align: center;"><small id="txt-privacy" style="opacity:0.5; font-size: 11px;">Gizlilik Politikası</small></div>
+                <div style="text-align: center;"><small id="txt-privacy" style="opacity:0.5; font-size: 11px; cursor: pointer;">Gizlilik Politikası</small></div>
             </div>
         </div>
     </div>
@@ -230,13 +221,52 @@
 
     <script>
         let currentSection = 'dice';
+        let rollCount = 0;
         const langData = {
-            tr: { settings: "Ayarlar", diceCount: "Zar Sayısı", lang: "Dil", volume: "Ses", vibration: "Titreşim", diceColor: "Zar Rengi (Neon)", bgColor: "Arka Plan (Pastel)", privacy: "Gizlilik Politikası", navDice: "ZAR", navSets: "AYARLAR" },
+            tr: { settings: "Ayarlar", diceCount: "Zar Sayısı", lang: "Dil", volume: "Ses Seviyesi", vibration: "Titreşim", diceColor: "Zar Rengi (Neon)", bgColor: "Arka Plan (Pastel)", privacy: "Gizlilik Politikası", navDice: "ZAR", navSets: "AYARLAR" },
             en: { settings: "Settings", diceCount: "Dice Count", lang: "Language", volume: "Volume", vibration: "Vibration", diceColor: "Dice Color (Neon)", bgColor: "Background (Pastel)", privacy: "Privacy Policy", navDice: "DICE", navSets: "SETTINGS" },
-            de: { settings: "Einstellungen", diceCount: "Würfelanzahl", lang: "Sprache", volume: "Lautstärke", vibration: "Vibration", diceColor: "Würfelfarbe", bgColor: "Hintergrund", privacy: "Datenschutz", navDice: "WÜRFEL", navSets: "SETUP" },
-            fr: { settings: "Paramètres", diceCount: "Nombre de dés", lang: "Langue", volume: "Volume", vibration: "Vibration", diceColor: "Couleur dés", bgColor: "Arrière-plan", privacy: "Confidentialité", navDice: "DÉS", navSets: "CONFIG" },
-            es: { settings: "Ajustes", diceCount: "Número de dados", lang: "Idioma", volume: "Volumen", vibration: "Vibración", diceColor: "Color de dados", bgColor: "Fondo", privacy: "Privacidad", navDice: "DADOS", navSets: "AJUSTES" }
+            de: { settings: "Einstellungen", diceCount: "Anzahl", lang: "Sprache", volume: "Lautstärke", vibration: "Vibration", diceColor: "Würfelfarbe", bgColor: "Hintergrund", privacy: "Datenschutz", navDice: "WÜRFEL", navSets: "SETUP" },
+            fr: { settings: "Paramètres", diceCount: "Nombre", lang: "Langue", volume: "Volume", vibration: "Vibration", diceColor: "Couleur", bgColor: "Fond", privacy: "Confidentialité", navDice: "DÉS", navSets: "AJUSTES" },
+            es: { settings: "Ajustes", diceCount: "Cantidad", lang: "Idioma", volume: "Volumen", vibration: "Vibración", diceColor: "Color", bgColor: "Fondo", privacy: "Privacidad", navDice: "DADOS", navSets: "AJUSTES" }
         };
+
+        function go(pos, id) {
+            document.getElementById('slider').style.transform = `translateX(${pos}%)`;
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('indicator').style.transform = (id === 'n1') ? 'translateX(0px)' : 'translateX(120px)';
+            currentSection = (id === 'n1') ? 'dice' : 'settings';
+        }
+
+        function handleGlobalClick() { if(currentSection === 'dice') rollDice(); }
+
+        function rollDice() {
+            rollCount++;
+            document.querySelectorAll('.cube').forEach(cube => {
+                const face = Math.floor(Math.random() * 6) + 1;
+                let x = 0, y = 0;
+                switch(face) {
+                    case 1: x = 0; y = 0; break;
+                    case 2: x = 0; y = 180; break;
+                    case 3: x = 0; y = -90; break;
+                    case 4: x = 0; y = 90; break;
+                    case 5: x = -90; y = 0; break;
+                    case 6: x = 90; y = 0; break;
+                }
+                const extra = 1080 + (rollCount * 360); // Havalı dönüş için sürekli ekleme
+                cube.style.transform = `rotateX(${x + extra}deg) rotateY(${y + extra}deg)`;
+                if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(40);
+            });
+        }
+
+        function initDices() {
+            const count = document.getElementById('count').value;
+            const wrap = document.getElementById('dice-wrapper');
+            wrap.innerHTML = '';
+            for(let i=0; i<count; i++) {
+                wrap.innerHTML += `<div class="scene"><div class="cube"><div class="cube__face face-1">1</div><div class="cube__face face-2">6</div><div class="cube__face face-3">3</div><div class="cube__face face-4">4</div><div class="cube__face face-5">5</div><div class="cube__face face-6">2</div></div></div>`;
+            }
+        }
 
         function changeLang() {
             const l = document.getElementById('lang-select').value;
@@ -253,42 +283,6 @@
             document.getElementById('n2').innerText = d.navSets;
         }
 
-        function go(pos, id) {
-            document.getElementById('slider').style.transform = `translateX(${pos}%)`;
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('indicator').style.transform = (id === 'n1') ? 'translateX(0px)' : 'translateX(120px)';
-            currentSection = (id === 'n1') ? 'dice' : 'settings';
-        }
-
-        function handleGlobalClick(e) { if(currentSection === 'dice') rollDice(); }
-
-        function rollDice() {
-            document.querySelectorAll('.cube').forEach(cube => {
-                const face = Math.floor(Math.random() * 6) + 1;
-                let x = 0, y = 0;
-                switch(face) {
-                    case 1: x = 0; y = 0; break;
-                    case 2: x = 0; y = 180; break;
-                    case 3: x = 0; y = -90; break;
-                    case 4: x = 0; y = 90; break;
-                    case 5: x = -90; y = 0; break;
-                    case 6: x = 90; y = 0; break;
-                }
-                cube.style.transform = `rotateX(${x + 1080}deg) rotateY(${y + 1080}deg)`;
-                if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(40);
-            });
-        }
-
-        function initDices() {
-            const count = document.getElementById('count').value;
-            const wrap = document.getElementById('dice-wrapper');
-            wrap.innerHTML = '';
-            for(let i=0; i<count; i++) {
-                wrap.innerHTML += `<div class="scene"><div class="cube"><div class="cube__face face-1">1</div><div class="cube__face face-2">6</div><div class="cube__face face-3">3</div><div class="cube__face face-4">4</div><div class="cube__face face-5">5</div><div class="cube__face face-6">2</div></div></div>`;
-            }
-        }
-
         function setDiceCol(color, el) {
             document.documentElement.style.setProperty('--dice-color', color);
             document.documentElement.style.setProperty('--sel-dice-glow', color);
@@ -296,9 +290,9 @@
             el.classList.add('selected');
         }
 
-        function setBgCol(color, el, glowColor) {
+        function setBgCol(color, el, glow) {
             document.documentElement.style.setProperty('--bg-color', color);
-            document.documentElement.style.setProperty('--sel-bg-glow', glowColor);
+            document.documentElement.style.setProperty('--sel-bg-glow', glow);
             document.querySelectorAll('#bgColors .bg-dot').forEach(d => d.classList.remove('selected'));
             el.classList.add('selected');
         }
