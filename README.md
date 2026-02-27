@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zar Pro - Hey Ceminay</title>
+    <title>Zar</title>
     <style>
         :root {
             --bg-color: #f0f2f5; 
@@ -50,6 +50,7 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
+            margin-top: +20%;
         }
 
         .scene {
@@ -63,7 +64,7 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transform: rotateX(-20deg) rotateY(20deg);
+            transform: rotateX(0deg) rotateY(0deg);
             transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1.2);
         }
 
