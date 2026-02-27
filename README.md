@@ -1,9 +1,9 @@
-
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zar</title>
+    <title>3D Pro Dice - Hey Ceminay</title>
     <style>
         :root {
             --bg-color: #f0f2f5; 
@@ -21,7 +21,6 @@
             background-color: var(--bg-color);
             font-family: -apple-system, system-ui, sans-serif;
             height: 100vh;
-            width: 100vw;
             overflow: hidden;
             transition: background 0.8s ease;
         }
@@ -37,10 +36,10 @@
             width: 50%;
             height: 100%;
             display: flex;
-            align-items: center; /* Dikeyde tam orta */
-            justify-content: center; /* Yatayda tam orta */
             flex-direction: column;
-            position: relative;
+            align-items: center;
+            justify-content: center; /* ZARLARI DİKEYDE TAM MERKEZE ALAN KOD */
+            padding: 20px;
         }
 
         /* --- 3D ZAR MEKANİZMASI --- */
@@ -64,8 +63,8 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transform: rotateX(0deg) rotateY(0deg);
-            transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+            transform: rotateX(-20deg) rotateY(20deg);
+            transition: transform 1.3s cubic-bezier(0.15, 0.85, 0.35, 1.2);
         }
 
         .cube__face {
@@ -91,17 +90,16 @@
         .face-5 { transform: rotateX(90deg) translateZ(50px); }
         .face-6 { transform: rotateX(-90deg) translateZ(50px); }
 
-        /* --- AYARLAR KARTI --- */
+        /* --- AYARLAR PANELI --- */
         .settings-card {
             background: var(--glass);
             backdrop-filter: blur(30px) saturate(190%);
             -webkit-backdrop-filter: blur(30px) saturate(190%);
             border: 1px solid var(--ios-border);
             border-radius: 30px;
-            width: 90%;
+            width: 100%;
             max-width: 380px;
             padding: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
         }
 
         .settings-group {
@@ -112,7 +110,7 @@
         }
 
         .setting-row {
-            padding: 10px 15px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -123,8 +121,11 @@
         .color-grid { display: flex; gap: 10px; padding: 5px 0; }
         .color-dot { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid white; cursor: pointer; transition: 0.3s; }
         
-        .selected { transform: scale(1.2); animation: glow-ani 1.5s infinite alternate; }
-        @keyframes glow-ani { from { box-shadow: 0 0 2px white; } to { box-shadow: 0 0 15px white; } }
+        .dice-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-dice-glow); animation: glow-dice 1.5s infinite alternate; }
+        .bg-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-bg-glow); animation: glow-bg 1.5s infinite alternate; }
+
+        @keyframes glow-dice { from { box-shadow: 0 0 2px var(--sel-dice-glow); } to { box-shadow: 0 0 15px var(--sel-dice-glow); } }
+        @keyframes glow-bg { from { box-shadow: 0 0 2px var(--sel-bg-glow); } to { box-shadow: 0 0 15px var(--sel-bg-glow); } }
 
         /* --- ALT BAR --- */
         .nav-container {
@@ -147,7 +148,7 @@
             position: absolute;
             height: 50px;
             width: 110px;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 25px;
             transition: transform 0.4s cubic-bezier(0.6, 0.01, 0.1, 1);
         }
@@ -156,14 +157,14 @@
         .nav-item.active { color: #000; }
 
         select { background: none; border: none; font-weight: 600; font-family: inherit; }
+        input[type="range"] { accent-color: #007aff; }
     </style>
 </head>
 <body onclick="handleGlobalClick(event)">
 
     <div class="main-container" id="slider">
         <div class="section">
-            <div id="dice-wrapper">
-                </div>
+            <div id="dice-wrapper"></div>
         </div>
 
         <div class="section">
@@ -180,7 +181,7 @@
                     <div class="setting-row">
                         <span id="txt-lang">Dil</span>
                         <select id="lang-select" onchange="changeLang()">
-                            <option value="tr">Türkçe</option><option value="en">English</option>
+                            <option value="tr">Türkçe</option><option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option>
                         </select>
                     </div>
                 </div>
@@ -194,24 +195,26 @@
                     <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
                         <span id="txt-dice-color">Zar Rengi (Neon)</span>
                         <div class="color-grid" id="diceColors">
-                            <div class="color-dot d-dot selected" style="background:#00ff88" onclick="setDiceCol('#00ff88', this)"></div>
-                            <div class="color-dot d-dot" style="background:#00d9ff" onclick="setDiceCol('#00d9ff', this)"></div>
-                            <div class="color-dot d-dot" style="background:#ff0077" onclick="setDiceCol('#ff0077', this)"></div>
-                            <div class="color-dot d-dot" style="background:#ff9900" onclick="setDiceCol('#ff9900', this)"></div>
+                            <div class="color-dot dice-dot selected" style="background:#00ff88" onclick="setDiceCol('#00ff88', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#00d9ff" onclick="setDiceCol('#00d9ff', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#ff0077" onclick="setDiceCol('#ff0077', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#ccff00" onclick="setDiceCol('#ccff00', this)"></div>
+                            <div class="color-dot dice-dot" style="background:#ff9900" onclick="setDiceCol('#ff9900', this)"></div>
                         </div>
                     </div>
                     <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
                         <span id="txt-bg-color">Arka Plan (Pastel)</span>
                         <div class="color-grid" id="bgColors">
-                            <div class="color-dot b-dot selected" style="background:#f0f2f5" onclick="setBgCol('#f0f2f5', this)"></div>
-                            <div class="color-dot b-dot" style="background:#e3f2fd" onclick="setBgCol('#e3f2fd', this)"></div>
-                            <div class="color-dot b-dot" style="background:#f1f8e9" onclick="setBgCol('#f1f8e9', this)"></div>
-                            <div class="color-dot b-dot" style="background:#fce4ec" onclick="setBgCol('#fce4ec', this)"></div>
+                            <div class="color-dot bg-dot selected" style="background:#f0f2f5" onclick="setBgCol('#f0f2f5', this, '#aaa')"></div>
+                            <div class="color-dot bg-dot" style="background:#e3f2fd" onclick="setBgCol('#e3f2fd', this, '#90caf9')"></div>
+                            <div class="color-dot bg-dot" style="background:#f1f8e9" onclick="setBgCol('#f1f8e9', this, '#a5d6a7')"></div>
+                            <div class="color-dot bg-dot" style="background:#fff3e0" onclick="setBgCol('#fff3e0', this, '#ffcc80')"></div>
+                            <div class="color-dot bg-dot" style="background:#fce4ec" onclick="setBgCol('#fce4ec', this, '#f48fb1')"></div>
                         </div>
                     </div>
                 </div>
 
-                <div style="text-align: center;"><small id="txt-privacy" style="opacity:0.5; cursor: pointer;">Gizlilik Politikası</small></div>
+                <div style="text-align: center;"><small id="txt-privacy" style="opacity:0.5; font-size: 11px; cursor: pointer;">Gizlilik Politikası</small></div>
             </div>
         </div>
     </div>
@@ -225,6 +228,28 @@
     <script>
         let currentSection = 'dice';
         let rollCount = 0;
+        const langData = {
+            tr: { settings: "Ayarlar", diceCount: "Zar Sayısı", lang: "Dil", volume: "Ses Seviyesi", vibration: "Titreşim", diceColor: "Zar Rengi (Neon)", bgColor: "Arka Plan (Pastel)", privacy: "Gizlilik Politikası", navDice: "ZAR", navSets: "AYARLAR" },
+            en: { settings: "Settings", diceCount: "Dice Count", lang: "Language", volume: "Volume", vibration: "Vibration", diceColor: "Dice Color (Neon)", bgColor: "Background (Pastel)", privacy: "Privacy Policy", navDice: "DICE", navSets: "SETTINGS" },
+            de: { settings: "Einstellungen", diceCount: "Anzahl", lang: "Sprache", volume: "Lautstärke", vibration: "Vibration", diceColor: "Würfelfarbe", bgColor: "Hintergrund", privacy: "Datenschutz", navDice: "WÜRFEL", navSets: "SETUP" },
+            fr: { settings: "Paramètres", diceCount: "Nombre", lang: "Langue", volume: "Volume", vibration: "Vibration", diceColor: "Couleur", bgColor: "Fond", privacy: "Confidentialité", navDice: "DÉS", navSets: "AJUSTES" },
+            es: { settings: "Ajustes", diceCount: "Cantidad", lang: "Idioma", volume: "Volumen", vibration: "Vibración", diceColor: "Color", bgColor: "Fondo", privacy: "Privacidad", navDice: "DADOS", navSets: "AJUSTES" }
+        };
+
+        function changeLang() {
+            const l = document.getElementById('lang-select').value;
+            const d = langData[l];
+            document.getElementById('txt-settings').innerText = d.settings;
+            document.getElementById('txt-dice-count').innerText = d.diceCount;
+            document.getElementById('txt-lang').innerText = d.lang;
+            document.getElementById('txt-volume').innerText = d.volume;
+            document.getElementById('txt-vibration').innerText = d.vibration;
+            document.getElementById('txt-dice-color').innerText = d.diceColor;
+            document.getElementById('txt-bg-color').innerText = d.bgColor;
+            document.getElementById('txt-privacy').innerText = d.privacy;
+            document.getElementById('n1').innerText = d.navDice;
+            document.getElementById('n2').innerText = d.navSets;
+        }
 
         function go(pos, id) {
             document.getElementById('slider').style.transform = `translateX(${pos}%)`;
@@ -237,7 +262,7 @@
         function handleGlobalClick() { if(currentSection === 'dice') rollDice(); }
 
         function rollDice() {
-            rollCount++; // Her seferinde açıyı artırarak efektin tazeliğini koruyoruz
+            rollCount++;
             document.querySelectorAll('.cube').forEach(cube => {
                 const face = Math.floor(Math.random() * 6) + 1;
                 let x = 0, y = 0;
@@ -249,10 +274,10 @@
                     case 5: x = -90; y = 0; break;
                     case 6: x = 90; y = 0; break;
                 }
-                const extra = 720 + (rollCount * 360); 
+                const extra = 1440 + (rollCount * 360); 
                 cube.style.transform = `rotateX(${x + extra}deg) rotateY(${y + extra}deg)`;
+                if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(50);
             });
-            if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(40);
         }
 
         function initDices() {
@@ -266,16 +291,17 @@
 
         function setDiceCol(color, el) {
             document.documentElement.style.setProperty('--dice-color', color);
-            document.querySelectorAll('.d-dot').forEach(d => d.classList.remove('selected'));
+            document.documentElement.style.setProperty('--sel-dice-glow', color);
+            document.querySelectorAll('#diceColors .dice-dot').forEach(d => d.classList.remove('selected'));
             el.classList.add('selected');
         }
 
-        function setBgCol(color, el) {
+        function setBgCol(color, el, glow) {
             document.documentElement.style.setProperty('--bg-color', color);
-            document.querySelectorAll('.b-dot').forEach(d => d.classList.remove('selected'));
+            document.documentElement.style.setProperty('--sel-bg-glow', glow);
+            document.querySelectorAll('#bgColors .bg-dot').forEach(d => d.classList.remove('selected'));
             el.classList.add('selected');
         }
-
         initDices();
     </script>
 </body>
