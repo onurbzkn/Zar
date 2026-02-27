@@ -2,18 +2,15 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3D Pro Dice - Hey Ceminay</title>
-<link rel="manifest" href="manifest.json">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>3D Pro Dice</title>
     <style>
         :root {
-            --bg-color: #f0f2f5; 
-            --dice-color: #00ff88;
-            --glass: rgba(255, 255, 255, 0.45);
-            --ios-border: rgba(255, 255, 255, 0.3);
-            --sel-dice-glow: #00ff88;
-            --sel-bg-glow: #aaa;
+            --bg-color: #0f172a; 
+            --dice-color: #ef4444;
+            --glass: rgba(255, 255, 255, 0.1);
+            --ios-border: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -21,157 +18,156 @@
         body {
             margin: 0;
             background-color: var(--bg-color);
-            font-family: -apple-system, system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             height: 100vh;
-            overflow: hidden;
-            transition: background 0.8s ease;
+            width: 100vw;
+            overflow: hidden; /* Kaydırmayı engelle, uygulama hissi ver */
+            color: var(--text-color);
         }
 
-        .main-container {
+        /* --- ANA KAYDIRICI (SLIDER) --- */
+        .main-view {
             display: flex;
-            width: 200%;
-            height: 100%;
-            transition: transform 0.6s cubic-bezier(0.6, 0.01, 0.1, 1);
+            width: 200vw; /* İki ekran yan yana */
+            height: 100vh;
+            transition: transform 0.5s cubic-bezier(0.6, 0.01, 0.1, 1);
         }
 
         .section {
-            width: 50%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* ZARLARI DİKEYDE TAM MERKEZE ALAN KOD */
+            justify-content: center;
             padding: 20px;
+            padding-bottom: 100px; /* Alt bar için boşluk */
         }
 
-        /* --- 3D ZAR MEKANİZMASI --- */
+        /* --- ZAR ALANI --- */
         #dice-wrapper {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            margin-top: +30%;
-        }
-
-        .scene {
-            width: 100px;
-            height: 100px;
-            perspective: 1000px;
-        }
-
-        .cube {
+            gap: 25px;
             width: 100%;
-            height: 100%;
-            position: relative;
+            margin-top: +30%;
+    
+        }
+
+        .scene { width: 110px; height: 110px; perspective: 1000px; }
+        .cube {
+            width: 100%; height: 100%; position: relative;
             transform-style: preserve-3d;
             transform: rotateX(-20deg) rotateY(20deg);
             transition: transform 1.3s cubic-bezier(0.15, 0.85, 0.35, 1.2);
         }
-
         .cube__face {
-            position: absolute;
-            width: 100px;
-            height: 100px;
+            position: absolute; width: 110px; height: 110px;
             background: var(--dice-color);
-            border: 1px solid rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
-            font-weight: bold;
-            color: white;
-            border-radius: 20px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 0 8px var(--dice-color);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; font-weight: bold; color: white;
+            border-radius: 22px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--dice-color);
         }
+        .face-1 { transform: rotateY(0deg) translateZ(55px); }
+        .face-2 { transform: rotateY(180deg) translateZ(55px); }
+        .face-3 { transform: rotateY(90deg) translateZ(55px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(55px); }
+        .face-5 { transform: rotateX(90deg) translateZ(55px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(55px); }
 
-        .face-1 { transform: rotateY(0deg) translateZ(50px); }
-        .face-2 { transform: rotateY(180deg) translateZ(50px); }
-        .face-3 { transform: rotateY(90deg) translateZ(50px); }
-        .face-4 { transform: rotateY(-90deg) translateZ(50px); }
-        .face-5 { transform: rotateX(90deg) translateZ(50px); }
-        .face-6 { transform: rotateX(-90deg) translateZ(50px); }
-
-        /* --- AYARLAR PANELI --- */
-        .settings-card {
-            background: var(--glass);
-            backdrop-filter: blur(30px) saturate(190%);
-            -webkit-backdrop-filter: blur(30px) saturate(190%);
-            border: 1px solid var(--ios-border);
-            border-radius: 30px;
+        /* --- TAM EKRAN AYARLAR --- */
+        .settings-content {
             width: 100%;
-            max-width: 380px;
-            padding: 20px;
+            max-width: 450px;
+            height: 100%;
+            overflow-y: auto;
+            padding-top: 40px;
         }
 
         .settings-group {
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            overflow: hidden;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--ios-border);
         }
 
         .setting-row {
-            padding: 12px 16px;
+            padding: 18px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 0.5px solid rgba(0,0,0,0.05);
-            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .color-grid { display: flex; gap: 10px; padding: 5px 0; }
-        .color-dot { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid white; cursor: pointer; transition: 0.3s; }
-        
-        .dice-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-dice-glow); animation: glow-dice 1.5s infinite alternate; }
-        .bg-dot.selected { transform: scale(1.2); box-shadow: 0 0 12px var(--sel-bg-glow); animation: glow-bg 1.5s infinite alternate; }
+        .color-grid { display: flex; gap: 12px; }
+        .color-dot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; cursor: pointer; }
+        .selected { transform: scale(1.2); box-shadow: 0 0 15px white; }
 
-        @keyframes glow-dice { from { box-shadow: 0 0 2px var(--sel-dice-glow); } to { box-shadow: 0 0 15px var(--sel-dice-glow); } }
-        @keyframes glow-bg { from { box-shadow: 0 0 2px var(--sel-bg-glow); } to { box-shadow: 0 0 15px var(--sel-bg-glow); } }
-
-        /* --- ALT BAR --- */
-        .nav-container {
+        /* --- ALT BAR (STİCKY BOTTOM) --- */
+        .bottom-nav {
             position: fixed;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            width: 240px;
-            height: 60px;
-            background: var(--glass);
+            width: 90%;
+            max-width: 320px;
+            height: 70px;
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(25px);
-            border-radius: 30px;
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 35px;
             display: flex;
-            border: 1px solid var(--ios-border);
+            align-items: center;
             padding: 5px;
-            z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 9999;
         }
 
         .nav-indicator {
             position: absolute;
-            height: 50px;
-            width: 110px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 25px;
+            height: 60px;
+            width: calc(50% - 5px);
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
             transition: transform 0.4s cubic-bezier(0.6, 0.01, 0.1, 1);
         }
 
-        .nav-item { flex: 1; text-align: center; font-weight: 700; color: rgba(0,0,0,0.3); cursor: pointer; z-index: 1002; line-height: 50px; }
-        .nav-item.active { color: #000; }
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            z-index: 10;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
 
-        select { background: none; border: none; font-weight: 600; font-family: inherit; }
-        input[type="range"] { accent-color: #007aff; }
+        .nav-item.active { color: #fff; }
+
+        select, input[type="range"] { 
+            background: none; border: none; color: white; font-weight: 600; font-size: 16px;
+        }
+        option { background: #1e293b; color: white; }
     </style>
 </head>
 <body onclick="handleGlobalClick(event)">
 
-    <div class="main-container" id="slider">
-        <div class="section">
+    <div class="main-view" id="mainSlider">
+        <div class="section" id="dice-section">
             <div id="dice-wrapper"></div>
+            <p style="margin-top: 40px; opacity: 0.3; font-size: 14px;">ZAR ATMAK İÇİN DOKUN</p>
         </div>
 
-        <div class="section">
-            <div class="settings-card" onclick="event.stopPropagation()">
-                <h3 id="txt-settings" style="margin: 0 0 15px 5px;">Ayarlar</h3>
+        <div class="section" id="settings-section">
+            <div class="settings-content" onclick="event.stopPropagation()">
+                <h2 id="txt-settings" style="margin-left: 10px;">Ayarlar</h2>
                 
                 <div class="settings-group">
                     <div class="setting-row">
@@ -183,85 +179,55 @@
                     <div class="setting-row">
                         <span id="txt-lang">Dil</span>
                         <select id="lang-select" onchange="changeLang()">
-                            <option value="tr">Türkçe</option><option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option>
+                            <option value="tr">Türkçe</option><option value="en">English</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="settings-group">
-                    <div class="setting-row"><span id="txt-volume">Ses Seviyesi</span><input type="range" style="width: 80px;"></div>
+                    <div class="setting-row"><span id="txt-volume">Ses Seviyesi</span><input type="range" style="width: 100px;"></div>
                     <div class="setting-row"><span id="txt-vibration">Titreşim</span><input type="checkbox" id="vibrate-toggle" checked></div>
                 </div>
 
                 <div class="settings-group">
-                    <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
-                        <span id="txt-dice-color">Zar Rengi (Neon)</span>
+                    <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:12px;">
+                        <span id="txt-dice-color">Zar Rengi</span>
                         <div class="color-grid" id="diceColors">
-                            <div class="color-dot dice-dot selected" style="background:#00ff88" onclick="setDiceCol('#00ff88', this)"></div>
-                            <div class="color-dot dice-dot" style="background:#00d9ff" onclick="setDiceCol('#00d9ff', this)"></div>
-                            <div class="color-dot dice-dot" style="background:#ff0077" onclick="setDiceCol('#ff0077', this)"></div>
-                            <div class="color-dot dice-dot" style="background:#ccff00" onclick="setDiceCol('#ccff00', this)"></div>
-                            <div class="color-dot dice-dot" style="background:#ff9900" onclick="setDiceCol('#ff9900', this)"></div>
-                        </div>
-                    </div>
-                    <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
-                        <span id="txt-bg-color">Arka Plan (Pastel)</span>
-                        <div class="color-grid" id="bgColors">
-                            <div class="color-dot bg-dot selected" style="background:#f0f2f5" onclick="setBgCol('#f0f2f5', this, '#aaa')"></div>
-                            <div class="color-dot bg-dot" style="background:#e3f2fd" onclick="setBgCol('#e3f2fd', this, '#90caf9')"></div>
-                            <div class="color-dot bg-dot" style="background:#f1f8e9" onclick="setBgCol('#f1f8e9', this, '#a5d6a7')"></div>
-                            <div class="color-dot bg-dot" style="background:#fff3e0" onclick="setBgCol('#fff3e0', this, '#ffcc80')"></div>
-                            <div class="color-dot bg-dot" style="background:#fce4ec" onclick="setBgCol('#fce4ec', this, '#f48fb1')"></div>
+                            <div class="color-dot" style="background:#ef4444" onclick="setDiceCol('#ef4444', this)"></div>
+                            <div class="color-dot" style="background:#22c55e" onclick="setDiceCol('#22c55e', this)"></div>
+                            <div class="color-dot" style="background:#3b82f6" onclick="setDiceCol('#3b82f6', this)"></div>
+                            <div class="color-dot" style="background:#eab308" onclick="setDiceCol('#eab308', this)"></div>
                         </div>
                     </div>
                 </div>
-
-                <div style="text-align: center;"><small id="txt-privacy" style="opacity:0.5; font-size: 11px; cursor: pointer;">Gizlilik Politikası</small></div>
             </div>
         </div>
     </div>
 
-    <div class="nav-container" onclick="event.stopPropagation()">
+    <div class="bottom-nav" onclick="event.stopPropagation()">
         <div class="nav-indicator" id="indicator"></div>
         <div class="nav-item active" id="n1" onclick="go(0, 'n1')">ZAR</div>
-        <div class="nav-item" id="n2" onclick="go(-50, 'n2')">AYARLAR</div>
+        <div class="nav-item" id="n2" onclick="go(-100, 'n2')">AYARLAR</div>
     </div>
 
     <script>
         let currentSection = 'dice';
         let rollCount = 0;
-        const langData = {
-            tr: { settings: "Ayarlar", diceCount: "Zar Sayısı", lang: "Dil", volume: "Ses Seviyesi", vibration: "Titreşim", diceColor: "Zar Rengi (Neon)", bgColor: "Arka Plan (Pastel)", privacy: "Gizlilik Politikası", navDice: "ZAR", navSets: "AYARLAR" },
-            en: { settings: "Settings", diceCount: "Dice Count", lang: "Language", volume: "Volume", vibration: "Vibration", diceColor: "Dice Color (Neon)", bgColor: "Background (Pastel)", privacy: "Privacy Policy", navDice: "DICE", navSets: "SETTINGS" },
-            de: { settings: "Einstellungen", diceCount: "Anzahl", lang: "Sprache", volume: "Lautstärke", vibration: "Vibration", diceColor: "Würfelfarbe", bgColor: "Hintergrund", privacy: "Datenschutz", navDice: "WÜRFEL", navSets: "SETUP" },
-            fr: { settings: "Paramètres", diceCount: "Nombre", lang: "Langue", volume: "Volume", vibration: "Vibration", diceColor: "Couleur", bgColor: "Fond", privacy: "Confidentialité", navDice: "DÉS", navSets: "AJUSTES" },
-            es: { settings: "Ajustes", diceCount: "Cantidad", lang: "Idioma", volume: "Volumen", vibration: "Vibración", diceColor: "Color", bgColor: "Fondo", privacy: "Privacidad", navDice: "DADOS", navSets: "AJUSTES" }
-        };
-
-        function changeLang() {
-            const l = document.getElementById('lang-select').value;
-            const d = langData[l];
-            document.getElementById('txt-settings').innerText = d.settings;
-            document.getElementById('txt-dice-count').innerText = d.diceCount;
-            document.getElementById('txt-lang').innerText = d.lang;
-            document.getElementById('txt-volume').innerText = d.volume;
-            document.getElementById('txt-vibration').innerText = d.vibration;
-            document.getElementById('txt-dice-color').innerText = d.diceColor;
-            document.getElementById('txt-bg-color').innerText = d.bgColor;
-            document.getElementById('txt-privacy').innerText = d.privacy;
-            document.getElementById('n1').innerText = d.navDice;
-            document.getElementById('n2').innerText = d.navSets;
-        }
 
         function go(pos, id) {
-            document.getElementById('slider').style.transform = `translateX(${pos}%)`;
+            document.getElementById('mainSlider').style.transform = `translateX(${pos}vw)`;
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('indicator').style.transform = (id === 'n1') ? 'translateX(0px)' : 'translateX(120px)';
+            
+            const ind = document.getElementById('indicator');
+            ind.style.transform = (id === 'n1') ? 'translateX(0px)' : 'translateX(100%)';
+            
             currentSection = (id === 'n1') ? 'dice' : 'settings';
         }
 
-        function handleGlobalClick() { if(currentSection === 'dice') rollDice(); }
+        function handleGlobalClick() {
+            if(currentSection === 'dice') rollDice();
+        }
 
         function rollDice() {
             rollCount++;
@@ -276,10 +242,9 @@
                     case 5: x = -90; y = 0; break;
                     case 6: x = 90; y = 0; break;
                 }
-                const extra = 1440 + (rollCount * 360); 
-                cube.style.transform = `rotateX(${x + extra}deg) rotateY(${y + extra}deg)`;
-                if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(50);
+                cube.style.transform = `rotateX(${x + (rollCount * 1440)}deg) rotateY(${y + (rollCount * 1440)}deg)`;
             });
+            if(document.getElementById('vibrate-toggle').checked && navigator.vibrate) navigator.vibrate(40);
         }
 
         function initDices() {
@@ -293,17 +258,10 @@
 
         function setDiceCol(color, el) {
             document.documentElement.style.setProperty('--dice-color', color);
-            document.documentElement.style.setProperty('--sel-dice-glow', color);
-            document.querySelectorAll('#diceColors .dice-dot').forEach(d => d.classList.remove('selected'));
+            document.querySelectorAll('#diceColors .color-dot').forEach(d => d.classList.remove('selected'));
             el.classList.add('selected');
         }
 
-        function setBgCol(color, el, glow) {
-            document.documentElement.style.setProperty('--bg-color', color);
-            document.documentElement.style.setProperty('--sel-bg-glow', glow);
-            document.querySelectorAll('#bgColors .bg-dot').forEach(d => d.classList.remove('selected'));
-            el.classList.add('selected');
-        }
         initDices();
     </script>
 </body>
