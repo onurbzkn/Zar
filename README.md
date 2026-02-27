@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>3D Pro Dice - Hey Ceminay</title>
+<link rel="manifest" href="manifest.json">
+    
     <style>
         :root {
             --bg-color: #f0f2f5; 
