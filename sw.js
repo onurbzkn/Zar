@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dice-pro-v2';
+const CACHE_NAME = 'dice-pro-v3';
 const ASSETS = [
   './',
   'index.html',
