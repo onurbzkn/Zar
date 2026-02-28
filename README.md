@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -58,6 +58,7 @@
             align-items: center;
             gap: 25px;
             width: 100%;
+            margin-top: -10%;
         }
 
         .scene { width: 110px; height: 110px; perspective: 1000px; }
