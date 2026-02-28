@@ -39,16 +39,21 @@
             transition: transform 0.5s cubic-bezier(0.6, 0.01, 0.1, 1);
         }
 
-        .section {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* ZARLARI TAM MERKEZE ALAN KOMUT */
-            padding: 20px;
-            padding-bottom: 120px; /* Alt bar için güvenli alan */
-        }
+        /* ESKİ HALİ (SİLİNECEK) */
+
+
+.section {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Elemanları dikeyde en üstten başlatır */
+    justify-content: center;  /* Yatayda ortalamaya devam eder */
+    padding: 20px;
+    padding-top: 60px;        /* Üstten biraz boşluk vererek "Zar" başlığına değmesini engelleriz */
+    padding-bottom: 120px;
+}
+
 
         /* 3D ZAR TASARIMI */
         #dice-wrapper {
