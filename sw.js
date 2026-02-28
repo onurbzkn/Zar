@@ -1,11 +1,12 @@
 const CACHE_NAME = 'dice-pro-v2';
 const ASSETS = [
-  '/Zar/',
-  '/Zar/index.html',
-  '/Zar/manifest.json',
-  '/Zar/icon-512.png',
-  '/Zar/icon-192.png'
+  './',
+  'index.html',
+  'manifest.json',
+  'icon-512.png',
+  'icon-192.png'
 ];
+
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
